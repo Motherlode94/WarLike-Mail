@@ -1,0 +1,15 @@
+WARLIKE MAIL — CLIENT WINDOWS C# 0.2
+
+Windows 10/11 x64. Nécessite le composant Microsoft Edge WebView2 Runtime.
+La version portable inclut .NET ; aucune installation du SDK n’est nécessaire.
+
+Ce client ouvre la même boîte interne et la même connexion privée que le site.
+Les mots de passe de boîtes ne sont pas conservés dans une configuration locale.
+Les sessions du site restent dans le profil WebView2 propre à cet utilisateur Windows.
+Aucun pont JavaScript vers C#, objet hôte ou accès aux fichiers du PC n’est exposé.
+Les certificats invalides sont refusés ; les sites hors liste restent hors de la vue.
+En cas de refus de connexion d’un fournisseur, ouvre la boîte dans ton navigateur.
+
+Compilation : dotnet publish WarLike.Mail.csproj -c Release -r win-x64 --self-contained true -o release
+Vérification : dotnet run --project tests/NavigationTests.csproj
+Une compilation et les tests de navigation sous Linux ne valident pas son exécution sous Windows.

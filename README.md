@@ -1,8 +1,8 @@
 # WarLike Mail
 
 > Site : https://warlike-mail.vikktor7.chatgpt.site/
-> Sources de la version publiée : `6a1e327b3b241610315e22747ad2e7ac2ff0884f`.
-> Les identifiants de connexion, secrets et bases de données ne sont pas inclus.
+> Source publiée : `9ccb4d0bd3eef3cb58fec8b65bfac78264621238`.
+> Secrets et données privées exclus.
 
 Client web et bureau de la messagerie interne WarLike, inspiré des conversations Gmail et du poste de travail Outlook : dossiers, recherche, favoris, archivage, réponses, brouillons serveur, contacts et fenêtre de rédaction séparée.
 
@@ -29,3 +29,9 @@ Messagerie interne : pas de réception d’e-mails Internet, ni de connexion à 
 ## Vérification
 
 TypeScript, build Sites, politique de rôles et d’origines. Le serveur est testé séparément avec des comptes fictifs de développement : refus anonyme, décision réservée aux responsables, inscription aux deux sites avec un identifiant commun, réponse persistée, confidentialité des conversations et des brouillons, délégation réservée au propriétaire. Les données de test restent dans la base locale et ne sont pas déployées.
+
+## Sécurité et boîtes nominatives
+
+Consulter [SECURITY.md](SECURITY.md) pour les protections, les limites et les tests. Dans WarLike Mail → Paramètres → Adresse et accès à la boîte, le responsable choisit un membre, son prénom et son nom puis génère ses identifiants. Le mot de passe aléatoire s’affiche une seule fois. Les adresses `prenom.nom@warlike.maill.dev` fonctionnent comme identifiants internes ; aucun DNS ni SMTP/IMAP Internet n’est configuré.
+
+Audit : `python3 security/audit.py --root .`. Validateur natif : `c++ -std=c++20 -O2 native/path_guard.cpp -o /tmp/warlike-path-guard` puis `/tmp/warlike-path-guard --self-test`. Tests Python : `python3 -m unittest discover -s security -p 'test_*.py'`.

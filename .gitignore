@@ -46,3 +46,10 @@ yarn-error.log*
 
 **/node_modules/
 desktop/release/
+
+**/bin/
+**/obj/
+**/__pycache__/
+/native/build/
+/security/reports/
+/desktop-csharp/release/
