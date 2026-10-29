@@ -1,0 +1,22 @@
+WARLIKE MAIL DESKTOP 0.1
+
+Ce client ouvre la même boîte connectée que le site WarLike Mail, dans des fenêtres de bureau dédiées.
+Le menu Fichier > Nouveau message ouvre une fenêtre de rédaction séparée.
+Les messages et brouillons sont conservés côté serveur. Internet est nécessaire.
+
+Version Windows portable : extraire tout le dossier, puis lancer WarLike Mail.exe.
+Garder les fichiers qui accompagnent le programme. Le programme n'est pas signé.
+La connexion utilise la page ChatGPT sécurisée du site privé. Si un fournisseur refuse une connexion depuis le client intégré, utiliser l'application web installée depuis Chrome ou Edge.
+
+SOURCES / CONSTRUCTION
+Node.js 22.14+ est requis pour construire les sources.
+Dans ce dossier : npm install
+Pour Windows x64 : npm run build:windows
+Pour démarrer les sources : npm exec --package=electron@45.1.0 -- electron .
+
+PÉRIMÈTRE
+Messagerie interne WarLike. Pas de réception de courrier Internet, d'import de boîte Gmail/Outlook, ni de serveur IMAP/SMTP.
+Les droits Studio/Engine sont consignés dans un registre commun ; les sites publics ne sont pas encore protégés par ce registre.
+Le propriétaire doit autoriser le référent dans le partage du site puis le nommer dans Paramètres.
+
+Electron : https://www.electronjs.org/
