@@ -45,3 +45,19 @@ Lecture, favoris, archivage et corbeille sont propres à chaque membre. Déplace
 Les brouillons sont enregistrés automatiquement après une pause de saisie. Chaque sauvegarde exige la révision attendue : une autre fenêtre ne peut pas écraser silencieusement un texte plus récent. Un brouillon envoyé ou supprimé conserve un marqueur de suppression afin de refuser les sauvegardes tardives.
 
 Les pages applicatives et les API du Server refusent les visiteurs non connectés et les comptes non validés, refusés ou suspendus. L’accueil et le formulaire d’inscription permettent de consulter ou déposer sa demande ; les espaces de gestion exigent le rôle approprié. Le partage natif Sites reste une première barrière distincte. Les redirections d’accès et réponses privées interdisent le cache. Les liens publics Studio/Engine restent hors de cette protection.
+
+## Déploiement Cloudflare Pages : vérification de disponibilité
+
+La copie `warlike-mail.pages.dev` et le site privé `warlike-mail.vikktor7.chatgpt.site` ne partagent pas automatiquement leurs variables de déploiement. Un build GitHub réussi ne démontre pas que le proxy de courrier fonctionne.
+
+Le point `GET /api/health` retourne `200` uniquement si `WARLIKE_SERVER_URL`, `WARLIKE_SERVER_GATE` et `WARLIKE_BRIDGE_KEY` sont présents côté serveur ; à défaut, `503`. Il ne renvoie pas les valeurs de secrets.
+
+Avant toute utilisation :
+
+1. Déployer l'application vinext avec une configuration compatible Cloudflare Workers/Pages, puis vérifier `/api/health` et `/api/mail`.
+2. Conserver `WARLIKE_BRIDGE_KEY` et `WARLIKE_SERVER_GATE` comme secrets serveur ; ne jamais les ajouter dans le navigateur ou GitHub.
+3. Vérifier que `WARLIKE_SERVER_URL` désigne le véritable backend privé autorisé ; `lib/server-client.ts` refuse explicitement les origines inattendues.
+4. Vérifier que les permissions de partage Sites et l'identité ChatGPT requises sont réellement disponibles dans l'environnement choisi.
+5. Tester le refus des requêtes anonymes, les rôles, l'activation d'une boîte, les envois, brouillons et réponses.
+
+La messagerie demeure **interne** : elle ne fournit toujours pas de livraison SMTP/IMAP sur Internet ni de récupération de compte CodeDuo.
