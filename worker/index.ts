@@ -5,6 +5,17 @@ import type { ConnectorBinding } from "../lib/connector-contract.mjs";
 
 const worker = {
   async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
+    const url = new URL(request.url);
+    // Public Pages deployments cannot trust client-supplied oai-authenticated-* headers.
+    // Authenticated mailbox operations remain available through the private Sites origin.
+    if (!import.meta.env.DEV && url.hostname.endsWith('.pages.dev') &&
+        (url.pathname.startsWith('/api/mail') || url.pathname.startsWith('/api/') && url.pathname !== '/api/health')) {
+      return secureResponse(Response.json({error:'Ouvre la messagerie depuis le site privé WarLike Mail pour te connecter.'},{status:401}),request,false);
+    }
+    if (!import.meta.env.DEV && url.hostname.endsWith('.pages.dev') &&
+        request.headers.has('oai-authenticated-user-id')) {
+      return secureResponse(Response.json({error:'En-têtes d’identité non autorisés sur le domaine public.'},{status:401}),request,false);
+    }
     let binding = ctx.props?.CONNECTORS;
     // Local preview emulates the same request-scoped capability. This branch and
     // the auxiliary service binding are absent from production builds.
