@@ -71,3 +71,9 @@ La messagerie demeure **interne** : elle ne fournit toujours pas de livraison SM
 - La connexion des utilisateurs repose actuellement sur l'identité fournie par le **Site privé ChatGPT**. Sur les déploiements publics `*.pages.dev`, l'API Mail refuse les en-têtes d'identité fournis par un client : il faut déployer un vrai fournisseur d'authentification fiable pour activer une connexion publique.
 - Le tableau de bord Cloudflare Pages et l'environnement Sites sont **distincts** : un statut `success` de compilation ne crée ni secrets, ni liaison D1/R2, ni droits d'accès.
 - Validation fonctionnelle à faire après configuration : ouvrir le Site privé Mail, authentifier deux comptes autorisés, créer/déverrouiller leurs boîtes, envoyer un message, confirmer la réception/réponse, fermer/réouvrir et vérifier les données persistées.
+
+## Cloudflare Pages `pages.dev` — état public
+
+Le projet Pages `warlike-mail.pages.dev` ne déploie **pas** le serveur applicatif Vinext. Il héberge une page statique de statut dans `pages-public/` et une fonction de diagnostic en lecture seule dans `functions/api/health.js`. La configuration Pages utilise `exit 0` et le dossier de sortie `pages-public` ; les réponses de santé sont intentionnellement `503` tant que l'application Workers et ses bindings ne sont pas déployés dans un environnement compatible. **Ne pas interpréter un déploiement Pages réussi comme une messagerie fonctionnelle.**
+
+Pour l'application complète, utiliser une cible Cloudflare Workers compatible Vinext, appliquer les migrations D1 et configurer secrets, bindings et fournisseur d'identité fiable. L'hébergement privé Sites existant est une plateforme distincte.
