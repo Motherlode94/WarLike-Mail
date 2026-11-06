@@ -61,3 +61,13 @@ Avant toute utilisation :
 5. Tester le refus des requêtes anonymes, les rôles, l'activation d'une boîte, les envois, brouillons et réponses.
 
 La messagerie demeure **interne** : elle ne fournit toujours pas de livraison SMTP/IMAP sur Internet ni de récupération de compte CodeDuo.
+
+## Liaison Mail ↔ Server : diagnostics et déploiement
+
+- L'API `/api/health` de Mail vérifie les variables de liaison **et** l'état réel de `/api/health` sur Server. Elle ne prouve **pas** encore un envoi de message signé de bout en bout.
+- `WARLIKE_SERVER_URL` accepte exclusivement `https://warlike-server.vikktor7.chatgpt.site` (hébergement privé) ou `https://warlike-server.pages.dev` (pont interservices signé).
+- `WARLIKE_BRIDGE_KEY` doit être une **même clé secrète aléatoire de 32 caractères minimum** sur Mail et Server. Ne jamais la committer, l'afficher dans une page ou la stocker côté navigateur.
+- `WARLIKE_SERVER_GATE` est nécessaire uniquement avec l'hébergement privé Sites ; il doit provenir de cet hébergement.
+- La connexion des utilisateurs repose actuellement sur l'identité fournie par le **Site privé ChatGPT**. Sur les déploiements publics `*.pages.dev`, l'API Mail refuse les en-têtes d'identité fournis par un client : il faut déployer un vrai fournisseur d'authentification fiable pour activer une connexion publique.
+- Le tableau de bord Cloudflare Pages et l'environnement Sites sont **distincts** : un statut `success` de compilation ne crée ni secrets, ni liaison D1/R2, ni droits d'accès.
+- Validation fonctionnelle à faire après configuration : ouvrir le Site privé Mail, authentifier deux comptes autorisés, créer/déverrouiller leurs boîtes, envoyer un message, confirmer la réception/réponse, fermer/réouvrir et vérifier les données persistées.
