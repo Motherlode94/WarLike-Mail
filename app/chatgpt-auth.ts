@@ -26,8 +26,8 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
     const token=(await cookies()).get(WARLIKE_COOKIE)?.value;if(!token)return null;
     const res=await callWarLike({server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE},'/api/warlike-auth/session',{token});
     if(!res.ok)return null;
-    const data=await res.json() as {user?:{id:string;name:string;email:string}|null};
-    const u=data.user;if(!u||typeof u.id!=='string'||typeof u.name!=='string'||typeof u.email!=='string')return null;
+    const data=await res.json() as {user?:{id:string;name:string;email:string}|null;mustChange?:boolean};
+    const u=data.user;if(data.mustChange||!u||typeof u.id!=='string'||typeof u.name!=='string'||typeof u.email!=='string')return null;
     return {userId:u.id,displayName:u.name,email:u.email,fullName:u.name};
   }
   const requestHeaders = await headers();
