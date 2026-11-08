@@ -2,8 +2,18 @@ import {env} from 'cloudflare:workers';
 import {cookies} from 'next/headers';
 import {signIdentity,type ForwardedUser} from './bridge';
 import {HttpError} from './security';
+import {callWarLike,WARLIKE_COOKIE} from './warlike-session-client';
 export const MAILBOX_COOKIE='__Host-warlike-mailbox';
 export async function serverCall(user:ForwardedUser,method='GET',body?:string){
+ if(env.WARLIKE_AUTH_ENABLED==='true'){
+  const token=(await cookies()).get(WARLIKE_COOKIE)?.value;
+  if(!token)throw new HttpError(401,'Connexion WarLike requise.');
+  const response=await callWarLike({server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE},'/api/mail',{method:method==='POST'?'POST':'GET',token,body});
+  if(!response.headers.get('content-type')?.includes('application/json'))throw new HttpError(503,'Réponse serveur invalide.');
+  const data=await response.json() as {error?:string};
+  if(!response.ok)throw new HttpError(response.status,data.error||'Le serveur a refusé la demande.');
+  return data;
+ }
  const server=env.WARLIKE_SERVER_URL,secret=env.WARLIKE_BRIDGE_KEY,gate=env.WARLIKE_SERVER_GATE;
  if(!server||!secret)throw new HttpError(503,'Connexion au serveur WarLike non configurée.');
  let url:URL;
