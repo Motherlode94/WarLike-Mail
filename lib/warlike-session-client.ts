@@ -9,7 +9,7 @@ export function serverOrigin(config:Connection):string {
  return url.origin;
 }
 export async function callWarLike(config:Connection,path:string,options:{method?:'GET'|'POST';token?:string;body?:string}={},request:typeof fetch=fetch):Promise<Response> {
- if(!['/api/warlike-auth/login','/api/warlike-auth/logout','/api/warlike-auth/session','/api/mail'].includes(path))throw new HttpError(400,'Route interdite.');
+ if(!['/api/warlike-auth/login','/api/warlike-auth/logout','/api/warlike-auth/session','/api/warlike-auth/password','/api/mail'].includes(path))throw new HttpError(400,'Route interdite.');
  if(options.token&&!VALID_TOKEN.test(options.token))throw new HttpError(401,'Session invalide.');
  const origin=serverOrigin(config),privateSite=origin==='https://warlike-server.vikktor7.chatgpt.site';
  const headers:Record<string,string>={'Origin':origin};
