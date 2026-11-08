@@ -8,7 +8,7 @@ const worker = {
     const url = new URL(request.url);
     // Public Pages deployments cannot trust client-supplied oai-authenticated-* headers.
     // Authenticated mailbox operations remain available through the private Sites origin.
-    if (!import.meta.env.DEV && url.hostname.endsWith('.pages.dev') &&
+    if (!import.meta.env.DEV && env.WARLIKE_AUTH_ENABLED!=='true' && url.hostname.endsWith('.pages.dev') &&
         (url.pathname.startsWith('/api/mail') || url.pathname.startsWith('/api/') && url.pathname !== '/api/health')) {
       return secureResponse(Response.json({error:'Ouvre la messagerie depuis le site privé WarLike Mail pour te connecter.'},{status:401}),request,false);
     }
