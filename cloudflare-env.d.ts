@@ -5,6 +5,7 @@ declare namespace Cloudflare {
     WARLIKE_SERVER_URL?: string;
     WARLIKE_BRIDGE_KEY?: string;
     WARLIKE_SERVER_GATE?: string;
+    WARLIKE_AUTH_ENABLED?: string;
     BUCKET?: R2Bucket;
   }
 }
