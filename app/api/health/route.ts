@@ -8,11 +8,13 @@ export async function GET(){
   const privateServer=origin==='https://warlike-server.vikktor7.chatgpt.site';
   const serverConfigured=!!source,serviceGateConfigured=!!env.WARLIKE_SERVER_GATE;
   const signingKeyValid=typeof env.WARLIKE_BRIDGE_KEY==='string'&&env.WARLIKE_BRIDGE_KEY.length>=32;
-  const configured=serverConfigured&&targetValid&&signingKeyValid&&(!privateServer||serviceGateConfigured);
+  const warlikeAuth=env.WARLIKE_AUTH_ENABLED==='true';
+  const configured=serverConfigured&&targetValid&&(warlikeAuth?Boolean(env.WARLIKE_SERVER):signingKeyValid&&(!privateServer||serviceGateConfigured));
   let upstreamReady=false,upstreamReachable=false;
   if(configured){
     try{
-      const response=await fetch(origin+'/api/health',{headers:{...(privateServer?{'OAI-Sites-Authorization':'Bearer '+env.WARLIKE_SERVER_GATE}:{})},redirect:'error',signal:AbortSignal.timeout(3500)});
+      const req=new Request(origin+'/api/health',{headers:{...(privateServer?{'OAI-Sites-Authorization':'Bearer '+env.WARLIKE_SERVER_GATE}:{})},redirect:'manual',signal:AbortSignal.timeout(3500)});
+      const response=warlikeAuth&&env.WARLIKE_SERVER?await env.WARLIKE_SERVER.fetch(req):await fetch(req);
       upstreamReachable=true;
       if(response.ok&&response.headers.get('content-type')?.includes('application/json')){
         const payload=await response.json() as {service?:string;ready?:boolean};

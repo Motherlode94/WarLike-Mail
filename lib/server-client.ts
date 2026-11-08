@@ -8,7 +8,7 @@ export async function serverCall(user:ForwardedUser,method='GET',body?:string){
  if(env.WARLIKE_AUTH_ENABLED==='true'){
   const token=(await cookies()).get(WARLIKE_COOKIE)?.value;
   if(!token)throw new HttpError(401,'Connexion WarLike requise.');
-  const response=await callWarLike({server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE},'/api/mail',{method:method==='POST'?'POST':'GET',token,body});
+  const response=await callWarLike({server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE,service:env.WARLIKE_SERVER},'/api/mail',{method:method==='POST'?'POST':'GET',token,body});
   if(!response.headers.get('content-type')?.includes('application/json'))throw new HttpError(503,'Réponse serveur invalide.');
   const data=await response.json() as {error?:string};
   if(!response.ok)throw new HttpError(response.status,data.error||'Le serveur a refusé la demande.');

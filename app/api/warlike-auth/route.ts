@@ -8,7 +8,7 @@ export async function POST(request:Request){
   const url=new URL(request.url);
   if(env.WARLIKE_AUTH_ENABLED!=='true')throw new HttpError(404,'Service indisponible.');
   if(url.protocol!=='https:'||request.headers.get('origin')!==url.origin||request.headers.get('sec-fetch-site')==='cross-site')throw new HttpError(403,'Origine refusée.');
-  const data=await readJsonObject(request,2048),config={server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE};
+  const data=await readJsonObject(request,2048),config={server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE,service:env.WARLIKE_SERVER,clientIp:request.headers.get('cf-connecting-ip')||undefined};
   if(data.action==='login'){
    const res=await callWarLike(config,'/api/warlike-auth/login',{method:'POST',body:JSON.stringify({login:data.login,password:data.password})});
    if(!res.ok)throw new HttpError(res.status,res.status===429?'Trop de tentatives. Réessaie plus tard.':'Identifiant ou mot de passe incorrect.');

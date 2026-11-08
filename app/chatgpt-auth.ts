@@ -24,7 +24,7 @@ const CALLBACK_PATH = "/callback";
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   if(env.WARLIKE_AUTH_ENABLED==='true'){
     const token=(await cookies()).get(WARLIKE_COOKIE)?.value;if(!token)return null;
-    const res=await callWarLike({server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE},'/api/warlike-auth/session',{token});
+    const res=await callWarLike({server:env.WARLIKE_SERVER_URL,gate:env.WARLIKE_SERVER_GATE,service:env.WARLIKE_SERVER},'/api/warlike-auth/session',{token});
     if(!res.ok)return null;
     const data=await res.json() as {user?:{id:string;name:string;email:string}|null;mustChange?:boolean};
     const u=data.user;if(data.mustChange||!u||typeof u.id!=='string'||typeof u.name!=='string'||typeof u.email!=='string')return null;

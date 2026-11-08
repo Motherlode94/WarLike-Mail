@@ -1,7 +1,7 @@
 import {HttpError} from './security.ts';
 export const WARLIKE_COOKIE='__Host-warlike_session';
 const VALID_TOKEN=/^[A-Za-z0-9_-]{43}$/;
-export type Connection={server?:string;gate?:string};
+export type Connection={server?:string;gate?:string;service?:{fetch(request:Request):Promise<Response>};clientIp?:string};
 export function serverOrigin(config:Connection):string {
  let url:URL;try{url=new URL(config.server||'');}catch{throw new HttpError(503,'Serveur WarLike non configuré.');}
  if(!['https://warlike-server.vikktor7.chatgpt.site','https://warlike-server.pages.dev'].includes(url.origin))throw new HttpError(503,'Serveur WarLike non reconnu.');
@@ -16,7 +16,8 @@ export async function callWarLike(config:Connection,path:string,options:{method?
  if(options.token)headers.Cookie=`${WARLIKE_COOKIE}=${options.token}`;
  if(options.body)headers['Content-Type']='application/json';
  if(privateSite)headers['OAI-Sites-Authorization']='Bearer '+config.gate;
- try{return await request(origin+path,{method:options.method||'GET',headers,body:options.body,redirect:'error',signal:AbortSignal.timeout(20000)});}catch{throw new HttpError(503,'Serveur WarLike inaccessible.');}
+ if(config.clientIp)headers['CF-Connecting-IP']=config.clientIp;
+ try{const init:RequestInit={method:options.method||'GET',headers,body:options.body,redirect:'manual',signal:AbortSignal.timeout(20000)};return config.service?await config.service.fetch(new Request(origin+path,init)):await request(origin+path,init);}catch{throw new HttpError(503,'Serveur WarLike inaccessible.');}
 }
 export function extractSession(response:Response):string {
  const cookie=response.headers.get('set-cookie')||'';
