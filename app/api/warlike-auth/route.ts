@@ -13,7 +13,14 @@ export async function POST(request:Request){
    const res=await callWarLike(config,'/api/warlike-auth/login',{method:'POST',body:JSON.stringify({login:data.login,password:data.password})});
    if(!res.ok)throw new HttpError(res.status,res.status===429?'Trop de tentatives. Réessaie plus tard.':'Identifiant ou mot de passe incorrect.');
    const token=extractSession(res);
-   return Response.json({ok:true},{headers:{'Cache-Control':'private, no-store','Set-Cookie':`${WARLIKE_COOKIE}=${token}; Path=/; Max-Age=28800; HttpOnly; Secure; SameSite=Lax`}});
+   const result=await res.json() as {mustChange?:boolean};
+   return Response.json({ok:true,mustChange:result.mustChange===true},{headers:{'Cache-Control':'private, no-store','Set-Cookie':`${WARLIKE_COOKIE}=${token}; Path=/; Max-Age=28800; HttpOnly; Secure; SameSite=Lax`}});
+  }
+  if(data.action==='password'){
+   const token=(await cookies()).get(WARLIKE_COOKIE)?.value;if(!token)throw new HttpError(401,'Connexion requise.');
+   const res=await callWarLike(config,'/api/warlike-auth/password',{method:'POST',token,body:JSON.stringify({currentPassword:data.currentPassword,newLogin:data.newLogin,newPassword:data.newPassword})});
+   const result=await res.json() as {error?:string};if(!res.ok)throw new HttpError(res.status,result.error||'Modification impossible.');
+   return Response.json({ok:true},{headers:{'Cache-Control':'private, no-store','Set-Cookie':`${WARLIKE_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`}});
   }
   if(data.action==='logout'){
    const token=(await cookies()).get(WARLIKE_COOKIE)?.value;
