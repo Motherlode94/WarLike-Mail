@@ -14,3 +14,5 @@ html[data-warlike-app="warlike-mail"] :is(.mark,.brand-mark,.logo:not(a),.brand 
 html[data-warlike-app="warlike-mail"]{--nav:#17211B;--nav-line:#596A5C;--ink:var(--wl-text);--paper:var(--wl-bg);--accent-dark:#37463D}
 html[data-warlike-app="warlike-mail"] .sidebar{background:#17211B;color:#D4DCCA}
 html[data-warlike-app="warlike-mail"] .sidebar :is(.brand small,.profile small,.sidebar-label){color:#D4DCCA}
+
+html[data-warlike-app="warlike-mail"] .sidebar{--wl-accent:#C5C5A9;--wl-primary:#C5C5A9;--wl-primary-text:#17211B;--wl-text:#F8FBF1;--wl-text-muted:#D4DCCA;--wl-surface:#233027;--wl-surface-alt:#37463D;--wl-border:#596A5C}
